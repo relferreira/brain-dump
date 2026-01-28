@@ -1,6 +1,6 @@
 # brain-dump
 
-A Claude Code skill for capturing URLs, text, and images into a personal knowledge base.
+A skill for capturing URLs, text, and images into a personal knowledge base.
 
 ## Overview
 
@@ -8,11 +8,9 @@ Brain Dump is a simple way to save things you find interesting. When you come ac
 
 ## Installation
 
-1. Clone this repository
-2. Add the skill to Claude Code:
-   ```bash
-   claude skill add /path/to/brain-dump
-   ```
+```bash
+npx skills add relferreira/brain-dump
+```
 
 ## Usage
 
@@ -101,5 +99,5 @@ Source: https://react.dev/learn/thinking-in-react
 
 ## Requirements
 
-- Claude Code CLI
-- The skill uses these tools: `Bash`, `Read`, `Write`, `Glob`, `WebFetch`
+- An AI assistant that supports skills
+- Tools needed: `Bash`, `Read`, `Write`, `Glob`, `WebFetch`
