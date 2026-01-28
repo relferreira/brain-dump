@@ -13,6 +13,9 @@ Capture URLs, text, and images into a personal knowledge base stored as Markdown
 ```
 /brain-dump                    → List recent dumps
 /brain-dump search <query>     → Search titles and content
+/brain-dump learn              → Learn from smart selection (default: random)
+/brain-dump learn random       → Learn from random dumps
+/brain-dump learn today        → Learn from today's dumps
 /brain-dump <url>              → Fetch, summarize, save URL
 /brain-dump <image-path>       → Describe and save image
 /brain-dump <text>             → Summarize (if long) and save text
@@ -26,9 +29,10 @@ Parse the arguments after `/brain-dump`:
 
 1. **No arguments** → List mode
 2. **Starts with `search `** → Search mode (query is everything after "search ")
-3. **Starts with `http://` or `https://`** → URL mode
-4. **File path ending in `.png/.jpg/.jpeg/.gif/.webp/.svg` (and file exists)** → Image mode
-5. **Anything else** → Text mode
+3. **Starts with `learn`** → Learn mode (check for subcommand: `random`, `today`, or default to smart selection)
+4. **Starts with `http://` or `https://`** → URL mode
+5. **File path ending in `.png/.jpg/.jpeg/.gif/.webp/.svg` (and file exists)** → Image mode
+6. **Anything else** → Text mode
 
 ### Step 2: Get Home Directory and Ensure Directory Exists
 
@@ -89,6 +93,133 @@ echo $HOME && mkdir -p ~/.brain-dump/assets
       ...matching text snippet...
    ```
 6. If no matches found, say: "No dumps found matching 'query'."
+
+---
+
+#### LEARN MODE (starts with "learn")
+
+Learn mode teaches you content from your dumps and then quizzes you.
+
+**Step 1: Parse subcommand**
+- `learn` or `learn random` → Smart/random selection
+- `learn today` → Today's dumps only
+
+**Step 2: Get home directory and load history**
+```bash
+echo $HOME
+```
+Then read `$HOME/.brain-dump/learn-history.json` if it exists.
+
+**Step 3: Select dumps based on mode**
+
+For `today`:
+- Get all dumps where frontmatter `date` matches today's date (YYYY-MM-DD)
+- If no dumps today, say: "No dumps from today. Try `/brain-dump learn random` instead."
+
+For `random` (default - smart selection):
+- Get all dump files using Glob
+- Select 3-5 dumps using this priority:
+  1. **2 new dumps** - files never seen in learn history
+  2. **1 weak dump** - file with lowest score ratio from history (if any)
+  3. **1-2 random dumps** - any files for reinforcement
+- If fewer than 3 total dumps exist, use all of them
+
+**Step 4: Teach Phase**
+1. Read all selected dump files
+2. Generate a cohesive lesson that:
+   - Introduces the topics covered
+   - Highlights key concepts from each dump
+   - Makes connections between related ideas
+3. Present the lesson:
+   ```
+   📚 Today's Lesson (3 dumps)
+
+   You've been learning about [topics]...
+
+   Key concepts:
+   • [Concept 1 from dump 1]
+   • [Concept 2 from dump 2]
+   • [Concept 3 from dump 3]
+
+   [2-3 paragraphs synthesizing the content]
+   ```
+
+**Step 5: Quiz Phase**
+1. Generate 3-5 questions based on the lesson content
+2. Mix question types:
+   - Multiple choice (A/B/C/D)
+   - True/False
+   - Short answer
+3. Ask questions one at a time:
+   ```
+   Question 1 of 4:
+
+   What is the main benefit of [concept]?
+
+   A) Option 1
+   B) Option 2
+   C) Option 3
+   D) Option 4
+   ```
+4. Wait for user's answer
+5. Respond with correct/incorrect and brief explanation
+6. Continue to next question
+
+**Step 6: Results and Save History**
+1. Calculate score
+2. Display results:
+   ```
+   📊 Results: 4/5 correct (80%)
+
+   ✓ Question 1 - Correct
+   ✓ Question 2 - Correct
+   ✗ Question 3 - Incorrect (review: thinking-in-react.md)
+   ✓ Question 4 - Correct
+   ✓ Question 5 - Correct
+
+   Great job! Consider reviewing the dumps you missed.
+   ```
+3. Save session to history file
+
+**History File Format: `~/.brain-dump/learn-history.json`**
+```json
+{
+  "sessions": [
+    {
+      "date": "2024-01-28T10:30:00Z",
+      "mode": "random",
+      "dumps": [
+        {
+          "file": "thinking-in-react.md",
+          "correct": 2,
+          "total": 2
+        },
+        {
+          "file": "hooks-note.md",
+          "correct": 1,
+          "total": 2
+        }
+      ],
+      "score": 4,
+      "total": 5
+    }
+  ]
+}
+```
+
+**Smart Selection Algorithm:**
+When selecting dumps for `random` mode:
+1. Parse history to calculate per-file stats:
+   - `timesStudied`: how many sessions included this file
+   - `correctRatio`: total correct / total questions for this file
+2. Categorize files:
+   - **New**: `timesStudied === 0`
+   - **Weak**: `correctRatio < 0.7` and `timesStudied > 0`
+   - **Strong**: `correctRatio >= 0.7`
+3. Select in order:
+   - Pick up to 2 from New (random)
+   - Pick 1 from Weak (lowest ratio first)
+   - Fill remaining (up to 5 total) from Strong or any available
 
 ---
 

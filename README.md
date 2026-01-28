@@ -17,6 +17,9 @@ npx skills add relferreira/brain-dump
 ```
 /brain-dump                    # List your recent dumps
 /brain-dump search <query>     # Search titles and content
+/brain-dump learn              # Learn and quiz (smart selection)
+/brain-dump learn random       # Learn from random dumps
+/brain-dump learn today        # Learn from today's dumps
 /brain-dump <url>              # Save and summarize a webpage
 /brain-dump <image-path>       # Describe and save an image
 /brain-dump <text>             # Save a note or thought
@@ -53,12 +56,19 @@ Shows your 10 most recent saves with dates and tags.
 ```
 Searches titles and content for matching text.
 
+**Learn from your dumps:**
+```
+/brain-dump learn
+```
+Teaches you content from your dumps, then quizzes you. Tracks your progress and prioritizes content you haven't seen or got wrong before.
+
 ## How It Works
 
 1. **Input Detection** - Automatically detects if you're saving a URL, image, or text
 2. **AI Processing** - Generates titles, summaries, and relevant tags
 3. **Markdown Storage** - Saves everything as clean Markdown with YAML frontmatter
 4. **Smart Filenames** - Creates readable, kebab-case filenames from content
+5. **Learn Mode** - Review your dumps with an interactive teach-then-quiz session
 
 ## Storage
 
