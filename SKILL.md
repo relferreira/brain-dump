@@ -1,6 +1,7 @@
 ---
 name: brain-dump
-description: Capture URLs, text, and images into personal knowledge base. Use when user says /brain-dump, "brain dump", "save this", "capture this URL".
+description: Capture URLs, text, and images into personal knowledge base. Use when user says /brain-dump, "save this URL", "dump this", "capture this", "brain dump", "remember this", or wants to search or learn from saved content.
+argument-hint: "[url | text | search <query> | learn [random|today]]"
 allowed-tools: Bash, Read, Write, Glob, Grep, WebFetch
 ---
 
