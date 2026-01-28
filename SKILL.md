@@ -28,12 +28,14 @@ Parse the arguments after `/brain-dump`:
 3. **File path ending in `.png/.jpg/.jpeg/.gif/.webp/.svg` (and file exists)** → Image mode
 4. **Anything else** → Text mode
 
-### Step 2: Ensure Directory Exists
+### Step 2: Get Home Directory and Ensure Directory Exists
 
-Before any write operation, ensure the directories exist:
+First, get the home directory path and create directories if needed:
 ```bash
-mkdir -p ~/.brain-dump/assets
+echo $HOME && mkdir -p ~/.brain-dump/assets
 ```
+
+**IMPORTANT**: For all Glob, Read, and Write operations, use the full expanded path (e.g., `/Users/username/.brain-dump/`) not `~`. The `~` only works in Bash commands.
 
 ### Step 3: Process Based on Mode
 
@@ -41,11 +43,16 @@ mkdir -p ~/.brain-dump/assets
 
 #### LIST MODE (no arguments)
 
-1. Use Glob to find all `*.md` files in `~/.brain-dump/`
-2. For each file (up to 10 most recent):
+1. First, get the home directory using Bash: `echo $HOME`
+   - This returns the full path like `/Users/relferreira`
+2. Use Glob with:
+   - `pattern`: `*.md`
+   - `path`: The home directory + `/.brain-dump` (e.g., `/Users/relferreira/.brain-dump`)
+   - NEVER use `~` in path - it won't expand. Always use the full path from step 1.
+3. For each file found (up to 10 most recent):
    - Read the frontmatter to extract date, tags, type
    - Extract the title (first `# ` heading)
-3. Display a formatted list:
+4. Display a formatted list:
    ```
    Recent dumps:
 
@@ -53,7 +60,7 @@ mkdir -p ~/.brain-dump/assets
    2. [2024-01-27] Quick Note (text) #notes
    ...
    ```
-4. If no dumps exist, say: "No dumps yet. Use `/brain-dump <url>`, `/brain-dump <text>`, or `/brain-dump <image-path>` to get started."
+5. If no files found, say: "No dumps yet. Use `/brain-dump <url>`, `/brain-dump <text>`, or `/brain-dump <image-path>` to get started."
 
 ---
 
