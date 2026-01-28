@@ -16,6 +16,7 @@ npx skills add relferreira/brain-dump
 
 ```
 /brain-dump                    # List your recent dumps
+/brain-dump search <query>     # Search titles and content
 /brain-dump <url>              # Save and summarize a webpage
 /brain-dump <image-path>       # Describe and save an image
 /brain-dump <text>             # Save a note or thought
@@ -45,6 +46,12 @@ Copies the image, generates a description, and saves it with the reference.
 /brain-dump
 ```
 Shows your 10 most recent saves with dates and tags.
+
+**Search your dumps:**
+```
+/brain-dump search react hooks
+```
+Searches titles and content for matching text.
 
 ## How It Works
 
@@ -100,4 +107,4 @@ Source: https://react.dev/learn/thinking-in-react
 ## Requirements
 
 - An AI assistant that supports skills
-- Tools needed: `Bash`, `Read`, `Write`, `Glob`, `WebFetch`
+- Tools needed: `Bash`, `Read`, `Write`, `Glob`, `Grep`, `WebFetch`

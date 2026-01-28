@@ -1,7 +1,7 @@
 ---
 name: brain-dump
 description: Capture URLs, text, and images into personal knowledge base. Use when user says /brain-dump, "brain dump", "save this", "capture this URL".
-allowed-tools: Bash, Read, Write, Glob, WebFetch
+allowed-tools: Bash, Read, Write, Glob, Grep, WebFetch
 ---
 
 # Brain Dump Skill
@@ -11,10 +11,11 @@ Capture URLs, text, and images into a personal knowledge base stored as Markdown
 ## Commands
 
 ```
-/brain-dump              → List recent dumps
-/brain-dump <url>        → Fetch, summarize, save URL
-/brain-dump <image-path> → Describe and save image
-/brain-dump <text>       → Summarize (if long) and save text
+/brain-dump                    → List recent dumps
+/brain-dump search <query>     → Search titles and content
+/brain-dump <url>              → Fetch, summarize, save URL
+/brain-dump <image-path>       → Describe and save image
+/brain-dump <text>             → Summarize (if long) and save text
 ```
 
 ## Instructions
@@ -24,9 +25,10 @@ Capture URLs, text, and images into a personal knowledge base stored as Markdown
 Parse the arguments after `/brain-dump`:
 
 1. **No arguments** → List mode
-2. **Starts with `http://` or `https://`** → URL mode
-3. **File path ending in `.png/.jpg/.jpeg/.gif/.webp/.svg` (and file exists)** → Image mode
-4. **Anything else** → Text mode
+2. **Starts with `search `** → Search mode (query is everything after "search ")
+3. **Starts with `http://` or `https://`** → URL mode
+4. **File path ending in `.png/.jpg/.jpeg/.gif/.webp/.svg` (and file exists)** → Image mode
+5. **Anything else** → Text mode
 
 ### Step 2: Get Home Directory and Ensure Directory Exists
 
@@ -61,6 +63,32 @@ echo $HOME && mkdir -p ~/.brain-dump/assets
    ...
    ```
 5. If no files found, say: "No dumps yet. Use `/brain-dump <url>`, `/brain-dump <text>`, or `/brain-dump <image-path>` to get started."
+
+---
+
+#### SEARCH MODE (starts with "search ")
+
+1. Extract the query (everything after "search ")
+2. Get the home directory using Bash: `echo $HOME`
+3. Use Grep to search for the query:
+   - `pattern`: the search query (case insensitive with `-i: true`)
+   - `path`: The home directory + `/.brain-dump` (e.g., `/Users/relferreira/.brain-dump`)
+   - `glob`: `*.md`
+   - `output_mode`: `files_with_matches`
+4. For each matching file:
+   - Read the file to extract title, date, tags, and type from frontmatter
+   - Show a snippet of the matching content (the line with the match)
+5. Display results:
+   ```
+   Search results for "query":
+
+   1. [2024-01-28] Article Title (url) #tag1 #tag2
+      ...matching text snippet...
+
+   2. [2024-01-27] Another Article (note) #notes
+      ...matching text snippet...
+   ```
+6. If no matches found, say: "No dumps found matching 'query'."
 
 ---
 
