@@ -2,7 +2,7 @@
 name: brain-dump
 description: Capture URLs, text, and images into personal knowledge base. Use when user says /brain-dump, "save this URL", "dump this", "capture this", "brain dump", "remember this", or wants to search or learn from saved content.
 argument-hint: "[url | text | search <query> | learn [random|today]]"
-allowed-tools: Bash, Read, Write, Glob, Grep, WebFetch
+allowed-tools: Bash, Read, Write, Glob, Grep, WebFetch, AskUserQuestion
 ---
 
 # Brain Dump Skill
@@ -148,23 +148,31 @@ For `random` (default - smart selection):
 **Step 5: Quiz Phase**
 1. Generate 3-5 questions based on the lesson content
 2. Mix question types:
-   - Multiple choice (A/B/C/D)
+   - Multiple choice (3-4 options)
    - True/False
-   - Short answer
-3. Ask questions one at a time:
-   ```
-   Question 1 of 4:
-
-   What is the main benefit of [concept]?
-
-   A) Option 1
-   B) Option 2
-   C) Option 3
-   D) Option 4
-   ```
-4. Wait for user's answer
-5. Respond with correct/incorrect and brief explanation
-6. Continue to next question
+3. Ask questions one at a time using the `AskUserQuestion` tool:
+   - Use `header` as the question number (e.g., "Q1 of 4")
+   - Use `question` for the full question text
+   - Use `options` for the answer choices (2-4 options)
+   - The tool automatically includes an "Other" option, which serves as a free-form answer
+   - Example:
+     ```json
+     {
+       "questions": [{
+         "question": "What is the main benefit of [concept]?",
+         "header": "Q1 of 4",
+         "options": [
+           { "label": "Option 1", "description": "Explanation of option 1" },
+           { "label": "Option 2", "description": "Explanation of option 2" },
+           { "label": "Option 3", "description": "Explanation of option 3" },
+           { "label": "Option 4", "description": "Explanation of option 4" }
+         ],
+         "multiSelect": false
+       }]
+     }
+     ```
+4. After the user selects an answer, respond with correct/incorrect and a brief explanation
+5. Continue to the next question
 
 **Step 6: Results and Save History**
 1. Calculate score
